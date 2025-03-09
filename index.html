@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mold Project Tracking</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+
+    <h2>Mold Project Tracking</h2>
+    <p>Customer: <span id="customerName"></span></p>
+    <p>Project: <span id="projectName"></span></p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Step</th>
+                <th>Status</th>
+                <th>Completion Date</th>
+            </tr>
+        </thead>
+        <tbody id="progressTable">
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchGoogleSheet() {
+            const sheetURL = "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/gviz/tq?tqx=out:json"; 
+            const response = await fetch(sheetURL);
+            const text = await response.text();
+            const jsonData = JSON.parse(text.substr(47).slice(0, -2));
+
+            // 解析 Google Sheets 数据
+            const rows = jsonData.table.rows;
+            const tableBody = document.getElementById("progressTable");
+
+            rows.forEach(row => {
+                const tr = document.createElement("tr");
+                row.c.forEach(cell => {
+                    const td = document.createElement("td");
+                    td.textContent = cell?.v || "";
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+
+            document.getElementById("customerName").textContent = "ABC Corp"; 
+            document.getElementById("projectName").textContent = "Mold-123";
+        }
+
+        fetchGoogleSheet();
+    </script>
+
+</body>
+</html>
